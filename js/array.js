@@ -11,7 +11,7 @@ class Point3D {
         this.z = Math.round(Math.random() * 200) - 101;
     }
 
-    cube() {
+    isCube() {
         return (this.x === this.y === this.z);
     }
 }
@@ -30,7 +30,7 @@ class MyArray extends Array {
     hasCubes() {
         var number = 0;
         for (var i = 0; i < this.length; i++) {
-            number = this[i].cube() ? number + 1 : number;
+            number = this[i].isCube() ? number + 1 : number;
         }
         if (number) {
             return number
