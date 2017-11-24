@@ -12,42 +12,68 @@ class Point3D {
     }
 
     isCube() {
-        return (this.x === this.y === this.z);
+        return this.x === this.y && this.x === this.z;
+    }
+
+    isAscendent() {
+        return this.x > this.y && this.y > this.z;
+    }
+
+    distanceTo(point) {
+        return Math.sqrt(Math.pow(point.x - this.x, 2) + Math.pow(point.y - this.y, 2) + Math.pow(point.z - this.z, 2));
     }
 }
 
-var myPoint = new Point3D(10, 10, 10);
+let myPoint = new Point3D(10, 10, 10);
 console.log(myPoint);
+console.log(myPoint.distanceTo(new Point3D(10, 0, 10)));
 
 class MyArray extends Array {
     generate() {
-        for (var i = 0; i < 30; i++) {
+        for (let i = 0; i < 30; i++) {
             this[i] = new Point3D();
             this[i].generate();
         }
     }
 
     hasCubes() {
-        var number = 0;
-        for (var i = 0; i < this.length; i++) {
-            number = this[i].isCube() ? number + 1 : number;
+        return this.some(point => point.isCube());
+    }
+
+    hasAscendendPoints() {
+        return this.every(point => point.isAscendent());
+    }
+
+    nearestTo(point) {
+        let distance = this[0].distanceTo(point),
+            idOfNearest = 0;
+        for (let i = 0; i < this.length; i++) {
+            if (this[i].distanceTo(point) < distance) {
+                distance = this[i].distanceTo(point);
+                idOfNearest = i;
+            }
         }
-        if (number) {
-            return number
-        } else {
-            return false
-        }
+        return this[idOfNearest];
     }
 }
 
-var someArray = new MyArray();
+let someArray = new MyArray();
 someArray.generate();
 
 console.log(someArray);
 console.log(someArray.hasCubes());
-console.log(someArray.length);
-console.log(someArray[10].x);
 
 someArray.push(myPoint);
 console.log(someArray);
 console.log(someArray.hasCubes());
+console.log(someArray.hasAscendendPoints());
+
+someArray.splice(30, 1);
+console.log(someArray);
+
+const origin = new Point3D(0, 0, 0);
+
+console.log(someArray.nearestTo(myPoint));
+
+
+console.log(someArray.nearestTo(origin));
