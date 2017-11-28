@@ -22,11 +22,16 @@ class Point3D {
     distanceTo(point) {
         return Math.sqrt(Math.pow(point.x - this.x, 2) + Math.pow(point.y - this.y, 2) + Math.pow(point.z - this.z, 2));
     }
+
+    double() {
+        this.x = this.x * 2;
+        this.y = this.y * 2;
+        this.z = this.z * 2;
+    }
 }
 
 let myPoint = new Point3D(10, 10, 10);
 console.log(myPoint);
-console.log(myPoint.distanceTo(new Point3D(10, 0, 10)));
 
 class MyArray extends Array {
     generate() {
@@ -55,6 +60,10 @@ class MyArray extends Array {
         }
         return this[idOfNearest];
     }
+
+    whereXIsEven() {
+        return this.filter(point => !(point.x % 2));
+    }
 }
 
 let someArray = new MyArray();
@@ -77,3 +86,4 @@ console.log(someArray.nearestTo(myPoint));
 
 
 console.log(someArray.nearestTo(origin));
+console.log(someArray.whereXIsEven());
