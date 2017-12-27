@@ -1,10 +1,43 @@
 "use strict";
 
-let drum = [];
-let registru = [];
+let trail = [];
+let registry = [];
+let animation = true;
+let n = 10;   //array size
+let animationDelay = 5; //less than 5 won't be faster
+let array = generateArray(n);
 
-function displayArray(title = 'title') {
-    let n = array.length;
+let delay, d1,d2;
+
+displayArray(); //
+colorMap(); //change background color of cell depending on cell value
+
+loadRegistry(); //table used for Dijkstra's algorithm
+d1 = new Date();
+console.log(d1);
+findPath(0, 0);
+
+function onFinish(){ //callback to run when findPath has finished
+    pickTrail();
+    displayTrail();
+    d2 = new Date();
+    console.log(d2);
+    delay = d2-d1;
+    console.log(delay);
+
+}
+
+//todo
+// 1. add all apps in one page site
+// 2. add buttons to edit: animation, animation delay, arraySize
+// 3. click on table to select starting and ending points
+
+
+
+
+
+
+function displayArray() {
     let html = "";
     html += "<table id='myTable'>";
 
@@ -38,118 +71,183 @@ function changeColor(row, column, color = 'trail') {
 }
 
 function displayTrail() {
-    for (let i = 0; i < drum.length; i++) {
-        changeColor(drum[i][0], drum[i][1]);
+    for (let i = 0; i < trail.length; i++) {
+        changeColor(trail[i][0], trail[i][1]);
     }
 }
 
-function findPath() {
-    drum.push([0, 0]); //starting point
-    let weight = array[0][0];
-    registru[0][1] = weight;
-    // console.log(weight);
-    chechNeighbours(0, 0);
+function findPath(startRow = 0, startCol = 0) {
+    registry[startRow * array.length + startCol][1] = array[startRow][startCol];
+    registry[startRow * array.length + startCol][2] = false;
+
+    checkNeighbours(startRow, startCol);
 }
 
-function chechNeighbours(row, col) {
-    let n = array.length;
-    if (row === 0) {
+function pickTrail(endRow = array.length - 1, endCol = array.length - 1) {
+    trail.push([endRow, endCol]);
+
+    while (registry[endRow * n + endCol][2]) {
+        trail.push(registry[endRow * n + endCol][2]);
+        [endRow, endCol] = registry[endRow * n + endCol][2];
+    }
+}
+
+function nextPoint() {
+    let distances = registry.map(m => m[3] ? Infinity : m[1]);
+    let idOfMin = 0;
+
+    if (distances.find(x => x !== Infinity)) {
+        for (let i = 0; i < distances.length; i++) {
+            idOfMin = distances[i] < distances[idOfMin] ? i : idOfMin;
+        }
+        let col = idOfMin % n;
+        idOfMin -= col;
+        let row = idOfMin / n;
+        return [row, col];
+    } else {
+        return false;
+    }
+
+}
+
+function checkNeighbours(row, col) {
+    let weight = 0,
+        cell, //current cell position in the registry
+        next; //next cell
+
+    if (animation) {
+        changeColor(row, col, 'hill');
+    }
+
+    cell = registry[(row - 1) * n + col];
+    if (row === 0 || cell[3]) {
         //no top
+        // console.log('no top or visited');
     } else {
         //row-1
-        registru[(row - 1) * n + col][1] = registru[row * n + col][1] + array[row - 1][col];
-        registru[(row - 1) * n + col].push([row, col]);
+        // console.log('look on top');
+        weight = registry[row * n + col][1] + array[row - 1][col];
+
+        if (weight < cell[1]) {
+            cell[1] = weight;
+            cell.push([row, col]);
+            // console.log('updated', weight);
+        }
+
+        if (animation) {
+            changeColor(row - 1, col, 'plain');
+        }
     }
 
-    if (row === array.length - 1) {
+    cell = registry[(row + 1) * n + col];
+    if (row === array.length - 1 || cell[3]) {
         //no botttom
+        // console.log('no bot or visited');
     } else {
         //row+1
-        registru[(row + 1) * n + col][1] = registru[row * n + col][1] + array[row + 1][col];
-        registru[(row + 1) * n + col].push([row, col]);
+        // console.log('look on bot');
+        weight = registry[row * n + col][1] + array[row + 1][col];
+
+        if (weight < cell[1]) {
+            cell[1] = weight;
+            cell.push([row, col]);
+            // console.log('updated', weight);
+        }
+
+        if (animation) {
+            changeColor(row + 1, col, 'plain');
+        }
     }
 
-    if (col === 0) {
+
+    cell = registry[row * n + col - 1];
+    if (col === 0 || cell[3]) {
         //no left
+        // console.log('no left or visited');
     } else {
         //col-1
-        registru[row * n + col - 1][1] = registru[row * n + col][1] + array[row][col - 1];
-        registru[row * n + col - 1].push([row,col]);
+        // console.log('look left');
+        weight = registry[row * n + col][1] + array[row][col - 1];
+
+        if (weight < cell[1]) {
+            cell[1] = weight;
+            cell.push([row, col]);
+            // console.log('updated', weight);
+        }
+        if (animation) {
+            changeColor(row, col - 1, 'plain');
+        }
     }
 
-    if (col === array.length - 1) {
+    cell = registry[row * n + col + 1];
+    if (col === array.length - 1 || cell[3]) {
         //no right
+        // console.log('no right or visited');
     } else {
         //col+1
-        registru[row * n + col + 1][1] = registru[row * n + col][1] + array[row][col + 1];
-        registru[row * n + col + 1].push([row,col]);
+        // console.log('look right');
+        weight = registry[row * n + col][1] + array[row][col + 1];
+
+        if (weight < cell[1]) {
+            cell[1] = weight;
+            cell.push([row, col]);
+            // console.log('updated', weight);
+        }
+        if (animation) {
+            changeColor(row, col + 1, 'plain');
+        }
+    }
+    registry[row * n + col].push(true); //for visited
+
+    next = nextPoint();
+    if (next) {
+        if (animation) {
+            setTimeout(() => {
+                // console.log('Checking cell', next);
+                checkNeighbours(next[0], next[1]);
+            }, animationDelay);
+        } else {
+            checkNeighbours(next[0], next[1]);
+        }
+    }else {
+        onFinish();
     }
 }
 
-
 function colorMap() {
-    let n = array.length;
     for (let i = 0; i < n; i++) {
         for (let j = 0; j < n; j++) {
-            if (array[i][j] < 25) {
-                changeColor(i, j, 'plane');
-            } else if (array[i][j] < 50) {
-                changeColor(i, j, 'hill');
-            } else if (array[i][j] < 75) {
-                changeColor(i, j, 'mountain');
+            if (array[i][j] < 11) {
+                changeColor(i, j, 'veryverylow');
+            } else if (array[i][j] < 22) {
+                changeColor(i, j, 'verylow');
+            } else if (array[i][j] < 33) {
+                changeColor(i, j, 'low');
+            } else if (array[i][j] < 44) {
+                changeColor(i, j, 'mediumlow');
+            } else if (array[i][j] < 55) {
+                changeColor(i, j, 'medium');
+            } else if (array[i][j] < 66) {
+                changeColor(i, j, 'mediumhigh');
+            } else if (array[i][j] < 77) {
+                changeColor(i, j, 'high');
+            } else if (array[i][j] < 88) {
+                changeColor(i, j, 'veryhigh');
             } else {
-                changeColor(i, j, 'highMountain');
+                changeColor(i, j, 'veryveryhigh');
             }
         }
     }
 }
 
 function loadRegistry() {
-    let n = array.length;
     let el = [];
     for (let i = 0; i < n; i++) {
         for (let j = 0; j < n; j++) {
             el.push([i, j]);
             el.push(Infinity);
-            registru.push(el);
+            registry.push(el);
             el = [];
         }
     }
 }
-
-let array = generateArray(3);
-displayArray();
-colorMap();
-
-loadRegistry();
-console.log(registru);
-findPath();
-displayTrail();
-
-
-// algorithm
-// create arrays of visited and unvisited points
-// 1. visit starting point
-// 2. calculate distance all unvisited neighbours
-// 3. if the distance to the neighbour is less than the saved one, then update the distance and last point
-//
-//
-//
-//
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

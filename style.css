@@ -11,21 +11,47 @@ table td {
 }
 
 .trail {
-    background-color: #009fff;
+    background-color: #a5ecff;
+    font-weight: bold;
 }
 
 .hill{
     background-color: orange;
 }
 
-.plane{
+.plain{
     background-color: chartreuse;
 }
 
-.mountain{
-    background-color: #cd6b00;
-}
 
-.highMountain{
-    background-color: #915900;
+.veryverylow{
+    background-color: #ffffff;
+}
+.verylow{
+    background-color: #dfdfdf;
+}
+.low{
+    background-color: #bfbfbf;
+}
+.mediumlow{
+    background-color: #9f9f9f;
+}
+.medium{
+    background-color: #7f7f7f;
+}
+.mediumhigh{
+    background-color: #5f5f5f;
+    color: white;
+}
+.high{
+    background-color: #3f3f3f;
+    color: white;
+}
+.veryhigh{
+    background-color: #2f2f2f;
+    color: white;
+}
+.veryveryhigh{
+    background-color: #000000;
+    color: white;
 }
