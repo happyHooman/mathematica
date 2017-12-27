@@ -3,8 +3,8 @@
 let trail = [];
 let registry = [];
 let animation = true;
-let n = 10;   //array size
-let animationDelay = 5; //less than 5 won't be faster
+let n = 20;   //array size
+let animationDelay = 10; //less than 5 won't be faster
 let array = generateArray(n);
 
 let delay, d1,d2;
@@ -14,14 +14,12 @@ colorMap(); //change background color of cell depending on cell value
 
 loadRegistry(); //table used for Dijkstra's algorithm
 d1 = new Date();
-console.log(d1);
 findPath(0, 0);
 
 function onFinish(){ //callback to run when findPath has finished
     pickTrail();
     displayTrail();
     d2 = new Date();
-    console.log(d2);
     delay = d2-d1;
     console.log(delay);
 
