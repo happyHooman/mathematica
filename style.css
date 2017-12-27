@@ -9,3 +9,23 @@ table td {
     text-align: right;
     padding: 3px;
 }
+
+.trail {
+    background-color: #009fff;
+}
+
+.hill{
+    background-color: orange;
+}
+
+.plane{
+    background-color: chartreuse;
+}
+
+.mountain{
+    background-color: #cd6b00;
+}
+
+.highMountain{
+    background-color: #915900;
+}

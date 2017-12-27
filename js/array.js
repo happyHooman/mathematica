@@ -60,6 +60,7 @@ class MyArray extends Array {
 
 let someArray = new MyArray();
 someArray.generate();
+let myPoint = new Point3D(10,10,5);
 
 console.log(someArray);
 console.log(someArray.hasCubes());
