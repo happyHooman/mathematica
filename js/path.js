@@ -33,8 +33,6 @@ function onFinish(){ //callback to run when findPath has finished
 
 
 
-
-
 function displayArray() {
     let html = "";
     html += "<table id='myTable'>";

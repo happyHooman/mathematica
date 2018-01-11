@@ -15,7 +15,7 @@ array = rotate1(array);
 console.log(" ");
 console.log("%cRotated array by first method", "font-weight: bold");
 logArray(array, "orange");
-displayArray(array, "rotate 1")
+displayArray(array, "rotate 1");
 
 array = [
     [1, 2, 3, 4, 5],
