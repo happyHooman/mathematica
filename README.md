@@ -6,7 +6,7 @@ Finds the shortest path between 2 oposite corners of a random generated array.
 Adding a slightly short delay in the execution of every step helps avoid JavaScript runtime errors when finding the path in a big array (80x80 and bigger).
 
 
-## [Rotate an Array](https://rawgit.com/happyHooman/Mathematica/master/index.html)
+## [Rotate an Array](https://rawgit.com/happyHooman/Mathematica/master/rotate.html)
 Rotate an array 90 degrees without creating another array.
 Very useful in big arrays that when RAM space is crucial.
 Below is the code.
