@@ -3,7 +3,7 @@
 let trail = [];
 let registry = [];
 let animation = true;
-let n = 20;   //array size
+let n = 30;   //array size
 let animationDelay = 10; //less than 5 won't be faster
 let array = generateArray(n);
 
@@ -29,8 +29,8 @@ function onFinish(){ //callback to run when findPath has finished
 // 1. add all apps in one page site
 // 2. add buttons to edit: animation, animation delay, arraySize
 // 3. click on table to select starting and ending points
-
-
+// 4. show top 10 shortest paths and their lenghth - on mouseover the lenght that path shall be displayed
+// 5. use other path finding algorithms
 
 
 function displayArray() {
