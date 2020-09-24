@@ -1,7 +1,7 @@
 # Mathematica
 
 
-## [Dijkstra's shortest path algorithm](https://rawgit.com/happyHooman/Mathematica/master/path.html )
+## [Dijkstra's shortest path algorithm](https://happyhooman.github.io/mathematica/ )
 Finds the shortest path between 2 oposite corners of a random generated array.
 Adding a slightly short delay in the execution of every step helps avoid JavaScript runtime errors when finding the path in a big array (80x80 and bigger).
 
