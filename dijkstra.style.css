@@ -1,0 +1,24 @@
+table {
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+table td {
+    border: 1px solid blue;
+    width: 20px;
+    height: 20px;
+    text-align: right;
+    padding: 3px;
+}
+
+.trail {
+    background-color: #a5ecff !important;
+    font-weight: bold;
+}
+
+.hill{
+    background-color: orange !important;
+}
+
+.plain{
+    background-color: chartreuse !important;
+}

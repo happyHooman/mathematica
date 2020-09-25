@@ -1,57 +1,12 @@
-table {
-    border-collapse: collapse;
-    margin-top: 20px;
-}
-table td {
-    border: 1px solid blue;
-    width: 20px;
-    height: 20px;
-    text-align: right;
-    padding: 3px;
+#container {
+    display: flex;
 }
 
-.trail {
-    background-color: #a5ecff;
-    font-weight: bold;
+#left-sidebar {
+    width: 200px;
+    border-right: 2px solid #5f5f5f;
 }
 
-.hill{
-    background-color: orange;
-}
-
-.plain{
-    background-color: chartreuse;
-}
-
-
-.veryverylow{
-    background-color: #ffffff;
-}
-.verylow{
-    background-color: #dfdfdf;
-}
-.low{
-    background-color: #bfbfbf;
-}
-.mediumlow{
-    background-color: #9f9f9f;
-}
-.medium{
-    background-color: #7f7f7f;
-}
-.mediumhigh{
-    background-color: #5f5f5f;
-    color: white;
-}
-.high{
-    background-color: #3f3f3f;
-    color: white;
-}
-.veryhigh{
-    background-color: #2f2f2f;
-    color: white;
-}
-.veryveryhigh{
-    background-color: #000000;
-    color: white;
+#main-content {
+    padding-left: 15px;
 }

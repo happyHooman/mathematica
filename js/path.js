@@ -2,34 +2,30 @@
 
 let trail = [];
 let registry = [];
-let animation = true;
+let startTime;
+let animation = false;
 let n = 30;   //array size
 let animationDelay = 10; //less than 5 won't be faster
-let array = generateArray(n);
+let array;
+let maxHeight;
+const defaultColor = '#041c56';
+const verticesAmount = 200;
+const mountainRadius = 4;
 
-let delay, d1,d2;
+generateArray(n);
 
-displayArray(); //
-colorMap(); //change background color of cell depending on cell value
-
-loadRegistry(); //table used for Dijkstra's algorithm
-d1 = new Date();
-findPath(0, 0);
-
-function onFinish(){ //callback to run when findPath has finished
+function onFinish() { //callback to run when findPath has finished
     pickTrail();
     displayTrail();
-    d2 = new Date();
-    delay = d2-d1;
-    console.log(delay);
-
+    console.log('Time elapsed:', new Date() - startTime);
+    toggleButtons('on');
 }
 
 //todo
 // 1. add all apps in one page site
 // 2. add buttons to edit: animation, animation delay, arraySize
 // 3. click on table to select starting and ending points
-// 4. show top 10 shortest paths and their lenghth - on mouseover the lenght that path shall be displayed
+// 4. show top 10 shortest paths and their length - on mouseover the length that path shall be displayed
 // 5. use other path finding algorithms
 
 
@@ -45,38 +41,121 @@ function displayArray() {
         html += "</tr>";
     }
     html += "</table>";
-    document.getElementById('container').innerHTML += html;
+    document.getElementById('main-content').innerHTML = html;
 }
 
 function generateArray(n) {
+    const vertices = [];
+    trail = [];
+    registry = [];
+
     let a = [];
     for (let i = 0; i < n; i++) {
         a[i] = [];
         for (let j = 0; j < n; j++) {
-            a[i][j] = Math.round(Math.random() * 99);
+            a[i][j] = Math.round(Math.random() * 20);
         }
     }
-    return a
+
+    for (let i = 0; i < verticesAmount; i++) {
+        vertices.push(Math.round(Math.random() * n * n))
+    }
+
+    console.log(vertices)
+
+    vertices.forEach(vertex => {
+        const i = Math.trunc(vertex / n);
+        const j = vertex % n;
+        let height = Math.round(Math.random() * 60) + 20;
+        const slope = 1 - 1 / mountainRadius;
+        a[i][j] += height;
+        height = Math.round(height * slope);
+        let k = 1
+        while (height > 10 && k < mountainRadius) {
+            radius(i, j, k).forEach(c => {
+                a[c[0]][c[1]] += height;
+            })
+            k++;
+            height = Math.round(height * slope);
+        }
+    })
+
+    const maxHeightArray = [];
+    for (let i = 0; i < a.length; i++) {
+        maxHeightArray.push(Math.max(...a[i]))
+    }
+
+    maxHeight = Math.max(...maxHeightArray) + 30;
+
+    array = a;
+    displayArray();
+    colorMap();
 }
 
-function changeColor(row, column, color = 'trail') {
+function radius(cx, cy, r) {
+    const cells = []
+    let x = cx - r, y = cy - r;
+
+    for (let i = 0; i < 2 * r; i++) {
+        y += 1
+        if (x >= 0 && y >= 0 && x < n && y < n) cells.push([x, y]);
+    }
+    for (let i = 0; i < 2 * r; i++) {
+        x += 1
+        if (x >= 0 && y >= 0 && x < n && y < n) cells.push([x, y]);
+    }
+    for (let i = 0; i < 2 * r; i++) {
+        y -= 1
+        if (x >= 0 && y >= 0 && x < n && y < n) cells.push([x, y]);
+    }
+    for (let i = 0; i < 2 * r; i++) {
+        x -= 1
+        if (x >= 0 && y >= 0 && x < n && y < n) cells.push([x, y]);
+    }
+
+    return cells
+}
+
+function changeColor(color, row, column, val) {
     let table = document.getElementById('myTable');
     let rows = table.getElementsByTagName('tr')[row];
     let col = rows.getElementsByTagName('td')[column];
-    col.className = color;
+
+    if (color === false) {
+        val = val > maxHeight ? maxHeight - 1 : val;
+        const ratio = val / maxHeight;
+
+        col.style.backgroundColor = '#' +
+            Math.round(255 - (255 - parseInt(defaultColor.slice(1, 3), 16)) * ratio).toString(16) +
+            Math.round(255 - (255 - parseInt(defaultColor.slice(3, 5), 16)) * ratio).toString(16) +
+            Math.round(255 - (255 - parseInt(defaultColor.slice(5), 16)) * ratio).toString(16);
+    } else {
+        col.className = color;
+    }
 }
 
 function displayTrail() {
     for (let i = 0; i < trail.length; i++) {
-        changeColor(trail[i][0], trail[i][1]);
+        changeColor('trail', trail[i][0], trail[i][1]);
     }
 }
 
 function findPath(startRow = 0, startCol = 0) {
+    toggleButtons('off');
+    loadRegistry(); //table used for Dijkstra's algorithm
+    startTime = new Date();
+
     registry[startRow * array.length + startCol][1] = array[startRow][startCol];
     registry[startRow * array.length + startCol][2] = false;
 
     checkNeighbours(startRow, startCol);
+}
+
+function toggleButtons(state) {
+    const buttons = document.querySelectorAll('#dijkstra button');
+    buttons.forEach(btn => {
+        btn.disabled = state === 'off';
+    })
 }
 
 function pickTrail(endRow = array.length - 1, endCol = array.length - 1) {
@@ -112,85 +191,65 @@ function checkNeighbours(row, col) {
         next; //next cell
 
     if (animation) {
-        changeColor(row, col, 'hill');
+        changeColor('hill', row, col, 'hill');
     }
 
     cell = registry[(row - 1) * n + col];
     if (row === 0 || cell[3]) {
-        //no top
-        // console.log('no top or visited');
     } else {
-        //row-1
-        // console.log('look on top');
         weight = registry[row * n + col][1] + array[row - 1][col];
 
         if (weight < cell[1]) {
             cell[1] = weight;
             cell.push([row, col]);
-            // console.log('updated', weight);
         }
 
         if (animation) {
-            changeColor(row - 1, col, 'plain');
+            changeColor('plain', row - 1, col);
         }
     }
 
     cell = registry[(row + 1) * n + col];
     if (row === array.length - 1 || cell[3]) {
-        //no botttom
-        // console.log('no bot or visited');
     } else {
-        //row+1
-        // console.log('look on bot');
         weight = registry[row * n + col][1] + array[row + 1][col];
 
         if (weight < cell[1]) {
             cell[1] = weight;
             cell.push([row, col]);
-            // console.log('updated', weight);
         }
 
         if (animation) {
-            changeColor(row + 1, col, 'plain');
+            changeColor('plain', row + 1, col);
         }
     }
 
 
     cell = registry[row * n + col - 1];
     if (col === 0 || cell[3]) {
-        //no left
-        // console.log('no left or visited');
     } else {
-        //col-1
-        // console.log('look left');
         weight = registry[row * n + col][1] + array[row][col - 1];
 
         if (weight < cell[1]) {
             cell[1] = weight;
             cell.push([row, col]);
-            // console.log('updated', weight);
         }
         if (animation) {
-            changeColor(row, col - 1, 'plain');
+            changeColor('plain', row, col - 1);
         }
     }
 
     cell = registry[row * n + col + 1];
     if (col === array.length - 1 || cell[3]) {
-        //no right
-        // console.log('no right or visited');
     } else {
-        //col+1
-        // console.log('look right');
         weight = registry[row * n + col][1] + array[row][col + 1];
 
         if (weight < cell[1]) {
             cell[1] = weight;
             cell.push([row, col]);
-            // console.log('updated', weight);
         }
         if (animation) {
-            changeColor(row, col + 1, 'plain');
+            changeColor('plain', row, col + 1);
         }
     }
     registry[row * n + col].push(true); //for visited
@@ -199,13 +258,12 @@ function checkNeighbours(row, col) {
     if (next) {
         if (animation) {
             setTimeout(() => {
-                // console.log('Checking cell', next);
                 checkNeighbours(next[0], next[1]);
             }, animationDelay);
         } else {
             checkNeighbours(next[0], next[1]);
         }
-    }else {
+    } else {
         onFinish();
     }
 }
@@ -213,25 +271,7 @@ function checkNeighbours(row, col) {
 function colorMap() {
     for (let i = 0; i < n; i++) {
         for (let j = 0; j < n; j++) {
-            if (array[i][j] < 11) {
-                changeColor(i, j, 'veryverylow');
-            } else if (array[i][j] < 22) {
-                changeColor(i, j, 'verylow');
-            } else if (array[i][j] < 33) {
-                changeColor(i, j, 'low');
-            } else if (array[i][j] < 44) {
-                changeColor(i, j, 'mediumlow');
-            } else if (array[i][j] < 55) {
-                changeColor(i, j, 'medium');
-            } else if (array[i][j] < 66) {
-                changeColor(i, j, 'mediumhigh');
-            } else if (array[i][j] < 77) {
-                changeColor(i, j, 'high');
-            } else if (array[i][j] < 88) {
-                changeColor(i, j, 'veryhigh');
-            } else {
-                changeColor(i, j, 'veryveryhigh');
-            }
+            changeColor(false, i, j, array[i][j]);
         }
     }
 }
