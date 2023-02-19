@@ -5,7 +5,7 @@
     <title>Mathematica</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="styles/style.css">
-    <link rel="stylesheet" href="styles/dijkstra.style.css">
+    <link rel="stylesheet" href="styles/substances.css">
 </head>
 <body>
 
@@ -14,25 +14,22 @@
         <div id="left-sidebar-title"><h2>APPS</h2></div>
         <ul id="apps-list">
             <li id="dijkstra">
-                <h4>Dijkstra's Shortest Path Algorithm</h4>
-                <label for="search-animation">
-                    <input type="checkbox" id="search-animation" onclick="animation=this.checked"> Animation
-                </label>
-                <button class="btn btn-primary" onclick="generateArray(n)">Remake</button>
-                <button class="btn btn-success" onclick="findPath(1, 1)">Start</button>
-
+                <h4>Substances Simulator</h4>
+                <button class="btn btn-primary" onclick="a.runSimulation()">Start</button>
+                <button class="btn btn-primary" onclick="a.stopSimulation()">Stop</button>
+                <button class="btn btn-primary" onclick="a.reset()">Reset</button>
             </li>
         </ul>
     </div>
 
 
     <div id="main-content">
-
+        <table></table>
     </div>
 
 </div>
 
-<script src="js/path.js"></script>
+<script src="js/substances.js"></script>
 
 </body>
 </html>
